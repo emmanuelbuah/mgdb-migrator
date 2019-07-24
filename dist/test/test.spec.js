@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bluebird_1 = require("bluebird");
 const src_1 = require("../src/");
 const dbURL = process.env.DBURL;
 describe('Migration', () => {
@@ -98,7 +97,7 @@ describe('Migration', () => {
             currentVersion = yield migrator.getVersion();
             expect(currentVersion).toBe(0);
         }));
-        describe('With async(async/await and Promise) up() & down()', () => {
+        describe('With async up() & down()', () => {
             beforeEach(() => {
                 migrator.add({
                     version: 3,
@@ -113,10 +112,10 @@ describe('Migration', () => {
                 migrator.add({
                     version: 4,
                     name: 'Version 4',
-                    up: bluebird_1.Promise.method((db) => {
+                    up: (db) => __awaiter(this, void 0, void 0, function* () {
                         return 'done';
                     }),
-                    down: bluebird_1.Promise.method((db) => {
+                    down: (db) => __awaiter(this, void 0, void 0, function* () {
                         return 'done';
                     }),
                 });

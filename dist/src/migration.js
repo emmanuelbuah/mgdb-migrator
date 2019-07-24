@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bluebird_1 = require("bluebird");
 const _ = require("lodash");
 const mongodb_1 = require("mongodb");
 const type_check_1 = require("type-check");
@@ -43,7 +42,6 @@ class Migration {
             let db;
             if (typeof (this.options.db) === 'string') {
                 const client = yield mongodb_1.MongoClient.connect(this.options.db, {
-                    promiseLibrary: bluebird_1.Promise,
                     useNewUrlParser: true,
                 });
                 db = client.db();

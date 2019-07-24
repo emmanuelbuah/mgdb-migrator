@@ -1,8 +1,6 @@
 
 // tslint:disable:no-console
 // tslint:disable:no-empty
-
-import { Promise as  BlueBirdPromise } from 'bluebird';
 import { Migration } from '../src/';
 
 const dbURL = process.env.DBURL;
@@ -110,7 +108,7 @@ describe('Migration', () => {
       expect(currentVersion).toBe(0);
     });
 
-    describe('With async(async/await and Promise) up() & down()', () => {
+    describe('With async up() & down()', () => {
 
       beforeEach(() => {
         migrator.add({
@@ -127,12 +125,12 @@ describe('Migration', () => {
         migrator.add({
           version: 4,
           name: 'Version 4',
-          up: BlueBirdPromise.method((db) => {
+          up: async (db) => {
             return 'done';
-          }),
-          down: BlueBirdPromise.method((db) => {
+          },
+          down: async (db) => {
             return 'done';
-          }),
+          },
         });
 
       });

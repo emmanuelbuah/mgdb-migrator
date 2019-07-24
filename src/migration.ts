@@ -105,15 +105,14 @@ export class Migration {
     let db: string | Db;
     if (typeof (this.options.db) === 'string') {
       const client = await MongoClient.connect(this.options.db, {
-        promiseLibrary: BluebirdPromise,
         useNewUrlParser: true,
       });
       db = client.db();
     } else {
       db = this.options.db;
     }
-    this._collection = db.collection(this.options.collectionName);
-    this._db = db;
+    this._collection = (db as Db).collection(this.options.collectionName);
+    this._db = db as Db;
   }
 
   /**
