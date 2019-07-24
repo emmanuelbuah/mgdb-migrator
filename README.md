@@ -108,29 +108,7 @@ migrator.add({
 });
 ```
 
-Control execution flow with promises:
-
-``` javascript
-// using bluebird promise lib
-import { Promise } from 'bluebird';
-
-migrator.add({
-  version: 1,
-  name: 'Name for this migration',
-  up: Promise.method(function(db) {
-    // use `db`(mongo driver Db instance) for migration setup to version 1.
-    // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
-    return db.collections('someCollection')....
-  }),
-  down: Promise.method(function(db) {
-    // use `db`(mongo driver Db instance) for migration setup to version 0
-    // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
-    return db.collections('someCollection')....
-  })
-});
-```
-
-Control execution flow with async/await:
+Control execution flow with async/await (promises):
 
 ``` javascript
 migrator.add({

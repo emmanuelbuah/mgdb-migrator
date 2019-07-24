@@ -1,6 +1,4 @@
 
-// tslint:disable:no-console
-// tslint:disable:no-empty
 import { Migration } from '../src/';
 
 const dbURL = process.env.DBURL;
@@ -19,7 +17,6 @@ describe('Migration', () => {
       });
       await migrator.config();
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
@@ -158,8 +155,10 @@ describe('Migration', () => {
         migrator.add({
           version: 3,
           name: 'Version 3.',
+          // tslint:disable-next-line: no-empty
           up: async (db) => {
           },
+          // tslint:disable-next-line: no-empty
           down: async (db) => {
           },
         });
@@ -167,6 +166,7 @@ describe('Migration', () => {
         migrator.add({
           version: 4,
           name: 'Version 4.',
+          // tslint:disable-next-line: no-empty
           up: async (db) => {
           },
           down: async (db) => {
@@ -180,6 +180,7 @@ describe('Migration', () => {
           up: async (db) => {
             throw new Error('Something went wrong');
           },
+          // tslint:disable-next-line: no-empty
           down: async (db) => {
           },
         });

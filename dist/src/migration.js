@@ -18,7 +18,7 @@ class Migration {
             version: 0,
             up: () => { },
         };
-        this._list = [this.defaultMigration];
+        this.list = [this.defaultMigration];
         this.options = opts ? opts : {
             log: true,
             logger: null,
@@ -36,7 +36,7 @@ class Migration {
             if (this.options.log === false) {
                 this.options.logger = (level, ...args) => { };
             }
-            if (!(this._db instanceof mongodb_1.Db) && !this.options.db) {
+            if (!(this.db instanceof mongodb_1.Db) && !this.options.db) {
                 throw new ReferenceError('Option.db canno\'t be null');
             }
             let db;
@@ -49,8 +49,8 @@ class Migration {
             else {
                 db = this.options.db;
             }
-            this._collection = db.collection(this.options.collectionName);
-            this._db = db;
+            this.collection = db.collection(this.options.collectionName);
+            this.db = db;
         });
     }
     add(migration) {
@@ -67,16 +67,16 @@ class Migration {
             throw new Error('Migration version must be greater than 0');
         }
         Object.freeze(migration);
-        this._list.push(migration);
-        this._list = _.sortBy(this._list, (m) => m.version);
+        this.list.push(migration);
+        this.list = _.sortBy(this.list, (m) => m.version);
     }
     migrateTo(command) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this._db) {
+            if (!this.db) {
                 throw new Error('Migration instance has not be configured/initialized.' +
                     ' Call <instance>.config(..) to initialize this instance');
             }
-            if (_.isUndefined(command) || command === '' || this._list.length === 0) {
+            if (_.isUndefined(command) || command === '' || this.list.length === 0) {
                 throw new Error('Cannot migrate using invalid command: ' + command);
             }
             let version;
@@ -90,7 +90,7 @@ class Migration {
             }
             try {
                 if (version === 'latest') {
-                    yield this.execute(_.last(this._list).version);
+                    yield this.execute(_.last(this.list).version);
                 }
                 else {
                     yield this.execute(parseInt(version, null), (subcommand === 'rerun'));
@@ -104,7 +104,7 @@ class Migration {
         });
     }
     getNumberOfMigrations() {
-        return this._list.length - 1;
+        return this.list.length - 1;
     }
     getVersion() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -113,12 +113,12 @@ class Migration {
         });
     }
     unlock() {
-        this._collection.updateOne({ _id: 'control' }, { $set: { locked: false } });
+        this.collection.updateOne({ _id: 'control' }, { $set: { locked: false } });
     }
     reset() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._list = [this.defaultMigration];
-            yield this._collection.deleteMany({});
+            this.list = [this.defaultMigration];
+            yield this.collection.deleteMany({});
         });
     }
     execute(version, rerun) {
@@ -127,7 +127,7 @@ class Migration {
             const control = yield this.getControl();
             let currentVersion = control.version;
             const migrate = (direction, idx) => __awaiter(this, void 0, void 0, function* () {
-                const migration = self._list[idx];
+                const migration = self.list[idx];
                 if (typeof migration[direction] !== 'function') {
                     unlock();
                     throw new Error('Cannot migrate ' + direction + ' on version ' + migration.version);
@@ -136,10 +136,10 @@ class Migration {
                     return migration.name ? ' (' + migration.name + ')' : '';
                 }
                 this.options.logger('info', 'Running ' + direction + '() on version ' + migration.version + maybeName());
-                yield migration[direction](self._db, migration);
+                yield migration[direction](self.db, migration);
             });
             const lock = () => __awaiter(this, void 0, void 0, function* () {
-                const updateResult = yield self._collection.findOneAndUpdate({
+                const updateResult = yield self.collection.findOneAndUpdate({
                     _id: 'control',
                     locked: false,
                 }, {
@@ -180,13 +180,13 @@ class Migration {
             }
             const startIdx = this.findIndexByVersion(currentVersion);
             const endIdx = this.findIndexByVersion(version);
-            this.options.logger('info', 'Migrating from version ' + this._list[startIdx].version
-                + ' -> ' + this._list[endIdx].version);
+            this.options.logger('info', 'Migrating from version ' + this.list[startIdx].version
+                + ' -> ' + this.list[endIdx].version);
             if (currentVersion < version) {
                 for (let i = startIdx; i < endIdx; i++) {
                     try {
                         yield migrate('up', i + 1);
-                        currentVersion = self._list[i + 1].version;
+                        currentVersion = self.list[i + 1].version;
                         yield updateVersion();
                     }
                     catch (e) {
@@ -200,7 +200,7 @@ class Migration {
                 for (let i = startIdx; i > endIdx; i--) {
                     try {
                         yield migrate('down', i);
-                        currentVersion = self._list[i - 1].version;
+                        currentVersion = self.list[i - 1].version;
                         yield updateVersion();
                     }
                     catch (e) {
@@ -216,7 +216,7 @@ class Migration {
     }
     getControl() {
         return __awaiter(this, void 0, void 0, function* () {
-            const con = yield this._collection.findOne({ _id: 'control' });
+            const con = yield this.collection.findOne({ _id: 'control' });
             return con || (yield this.setControl({
                 version: 0,
                 locked: false,
@@ -227,7 +227,7 @@ class Migration {
         return __awaiter(this, void 0, void 0, function* () {
             check('Number', control.version);
             check('Boolean', control.locked);
-            const updateResult = yield this._collection.updateOne({
+            const updateResult = yield this.collection.updateOne({
                 _id: 'control',
             }, {
                 $set: {
@@ -246,8 +246,8 @@ class Migration {
         });
     }
     findIndexByVersion(version) {
-        for (let i = 0; i < this._list.length; i++) {
-            if (this._list[i].version === version) {
+        for (let i = 0; i < this.list.length; i++) {
+            if (this.list[i].version === version) {
                 return i;
             }
         }

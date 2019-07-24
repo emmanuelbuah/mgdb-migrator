@@ -15,9 +15,9 @@ export interface IMigration {
 }
 export declare class Migration {
     private defaultMigration;
-    private _list;
-    private _collection;
-    private _db;
+    private list;
+    private collection;
+    private db;
     private options;
     constructor(opts?: IMigrationOptions);
     config(opts?: IMigrationOptions): Promise<void>;

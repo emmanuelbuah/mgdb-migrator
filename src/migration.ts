@@ -22,10 +22,7 @@
   remain locked and at the version it was at previously, however the db could
   be in an inconsistant state.
 */
-// tslint:disable:variable-name
-// tslint:disable:no-console
 
-import { Promise as BluebirdPromise } from 'bluebird';
 import * as _ from 'lodash';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { typeCheck } from 'type-check';
@@ -54,9 +51,9 @@ export class Migration {
     // tslint:disable-next-line:no-empty
     up: () => { },
   };
-  private _list: any[];
-  private _collection: Collection;
-  private _db: Db;
+  private list: any[];
+  private collection: Collection;
+  private db: Db;
   private options: IMigrationOptions;
 
   /**
@@ -66,7 +63,7 @@ export class Migration {
    */
   constructor(opts?: IMigrationOptions) {
     // Since we'll be at version 0 by default, we should have a migration set for it.
-    this._list = [this.defaultMigration];
+    this.list = [this.defaultMigration];
     this.options = opts ? opts : {
       // False disables logging
       log: true,
@@ -93,13 +90,14 @@ export class Migration {
     this.options = Object.assign({}, this.options, opts);
 
     if (!this.options.logger && this.options.log) {
+      // tslint:disable-next-line: no-console
       this.options.logger = (level: string, ...args) => console.log(level, ...args);
     }
     if (this.options.log === false) {
       // tslint:disable-next-line:no-empty
       this.options.logger = (level: string, ...args) => { };
     }
-    if (!(this._db instanceof Db) && !this.options.db) {
+    if (!(this.db instanceof Db) && !this.options.db) {
       throw new ReferenceError('Option.db canno\'t be null');
     }
     let db: string | Db;
@@ -111,8 +109,8 @@ export class Migration {
     } else {
       db = this.options.db;
     }
-    this._collection = (db as Db).collection(this.options.collectionName);
-    this._db = db as Db;
+    this.collection = (db as Db).collection(this.options.collectionName);
+    this.db = db as Db;
   }
 
   /**
@@ -142,8 +140,8 @@ export class Migration {
     // Freeze the migration object to make it hereafter immutable
     Object.freeze(migration);
 
-    this._list.push(migration);
-    this._list = _.sortBy(this._list, (m: any) => m.version);
+    this.list.push(migration);
+    this.list = _.sortBy(this.list, (m: any) => m.version);
   }
 
   /**
@@ -153,12 +151,12 @@ export class Migration {
    * @example '2,rerun' - if at version 2, re-run up migration
    */
   public async migrateTo(command: string | number): Promise<void> {
-    if (!this._db) {
+    if (!this.db) {
       throw new Error('Migration instance has not be configured/initialized.' +
         ' Call <instance>.config(..) to initialize this instance');
     }
 
-    if (_.isUndefined(command) || command === '' || this._list.length === 0) {
+    if (_.isUndefined(command) || command === '' || this.list.length === 0) {
       throw new Error('Cannot migrate using invalid command: ' + command);
     }
 
@@ -173,7 +171,7 @@ export class Migration {
 
     try {
       if (version === 'latest') {
-        await this.execute(_.last<any>(this._list).version);
+        await this.execute(_.last<any>(this.list).version);
       } else {
         await this.execute(parseInt(version as string, null), (subcommand === 'rerun'));
       }
@@ -193,7 +191,7 @@ export class Migration {
    */
   public getNumberOfMigrations(): number {
     // Exclude default/base migration v0 since its not a configured migration
-    return this._list.length - 1;
+    return this.list.length - 1;
   }
 
   /**
@@ -213,7 +211,7 @@ export class Migration {
    * @memberof Migration
    */
   public unlock(): void {
-    this._collection.updateOne({ _id: 'control' }, { $set: { locked: false } });
+    this.collection.updateOne({ _id: 'control' }, { $set: { locked: false } });
   }
 
   /**
@@ -223,8 +221,8 @@ export class Migration {
    * @memberof Migration
    */
   public async reset(): Promise<void> {
-    this._list = [this.defaultMigration];
-    await this._collection.deleteMany({});
+    this.list = [this.defaultMigration];
+    await this.collection.deleteMany({});
   }
 
   /**
@@ -243,7 +241,7 @@ export class Migration {
 
     // Run the actual migration
     const migrate = async (direction, idx) => {
-      const migration = self._list[idx];
+      const migration = self.list[idx];
 
       if (typeof migration[direction] !== 'function') {
         unlock();
@@ -257,7 +255,7 @@ export class Migration {
       this.options.logger('info',
         'Running ' + direction + '() on version ' + migration.version + maybeName());
 
-      await migration[direction](self._db, migration);
+      await migration[direction](self.db, migration);
 
     };
 
@@ -268,7 +266,7 @@ export class Migration {
        * object and thus be able to update it.  All other simultaneous callers will not match the
        * object and thus will have null return values in the result of the operation.
        */
-      const updateResult = await self._collection.findOneAndUpdate({
+      const updateResult = await self.collection.findOneAndUpdate({
         _id: 'control',
         locked: false,
       }, {
@@ -318,14 +316,14 @@ export class Migration {
     const endIdx = this.findIndexByVersion(version);
 
     // Log.info('startIdx:' + startIdx + ' endIdx:' + endIdx);
-    this.options.logger('info', 'Migrating from version ' + this._list[startIdx].version
-      + ' -> ' + this._list[endIdx].version);
+    this.options.logger('info', 'Migrating from version ' + this.list[startIdx].version
+      + ' -> ' + this.list[endIdx].version);
 
     if (currentVersion < version) {
       for (let i = startIdx; i < endIdx; i++) {
         try {
           await migrate('up', i + 1);
-          currentVersion = self._list[i + 1].version;
+          currentVersion = self.list[i + 1].version;
           await updateVersion();
         } catch (e) {
           this.options.
@@ -337,7 +335,7 @@ export class Migration {
       for (let i = startIdx; i > endIdx; i--) {
         try {
           await migrate('down', i);
-          currentVersion = self._list[i - 1].version;
+          currentVersion = self.list[i - 1].version;
           await updateVersion();
         } catch (e) {
           this.options.
@@ -359,7 +357,7 @@ export class Migration {
    * @memberof Migration
    */
   private async getControl(): Promise<{ version: number, locked: boolean }> {
-    const con = await this._collection.findOne({ _id: 'control' });
+    const con = await this.collection.findOne({ _id: 'control' });
     return con || (await this.setControl({
       version: 0,
       locked: false,
@@ -380,7 +378,7 @@ export class Migration {
     check('Number', control.version);
     check('Boolean', control.locked);
 
-    const updateResult = await this._collection.updateOne({
+    const updateResult = await this.collection.updateOne({
       _id: 'control',
     }, {
         $set: {
@@ -407,8 +405,8 @@ export class Migration {
    * @memberof Migration
    */
   private findIndexByVersion(version): number {
-    for (let i = 0; i < this._list.length; i++) {
-      if (this._list[i].version === version) {
+    for (let i = 0; i < this.list.length; i++) {
+      if (this.list[i].version === version) {
         return i;
       }
     }
