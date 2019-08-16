@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/jest": "24.0.17",
     "@types/lodash": "4.14.136",
-    "@types/mongodb": "3.1.30",
+    "@types/mongodb": "3.2.2",
     "@types/node": "10.14.13",
     "jest": "24.8.0",
     "tslint": "5.18.0",
@@ -50,7 +50,7 @@
   "dependencies": {
     "@types/bluebird": "3.5.27",
     "lodash": "4.17.15",
-    "mongodb": "3.2.7",
+    "mongodb": "3.3.0",
     "type-check": "0.3.2"
   },
   "jest": {
