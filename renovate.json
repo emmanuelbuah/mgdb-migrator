@@ -8,6 +8,13 @@
   "labels": [
     "bot:renovate"
   ],
+  "major": {
+    "automerge": false
+  },
+  "reviewers": [
+    "emmanuelbuah"
+  ],
   "commitMessagePrefix": "Renovate:",
-  "separateMultipleMajor": true
+  "separateMultipleMajor": true,
+  "timezone": "America/Chicago"
 }
