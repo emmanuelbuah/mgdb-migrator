@@ -42,7 +42,7 @@
     "@types/mongodb": "3.3.6",
     "@types/node": "10.17.0",
     "jest": "24.9.0",
-    "tslint": "5.20.0",
+    "tslint": "5.20.1",
     "tslint-eslint-rules": "5.4.0",
     "tslint-microsoft-contrib": "6.2.0",
     "typescript": "3.6.4",
