@@ -49,7 +49,7 @@
     "vrsource-tslint-rules": "6.0.0"
   },
   "dependencies": {
-    "@types/bluebird": "3.5.28",
+    "@types/bluebird": "3.5.29",
     "lodash": "4.17.15",
     "mongodb": "3.3.3",
     "type-check": "0.3.2"
