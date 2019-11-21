@@ -8,6 +8,7 @@
   "labels": [
     "bot:renovate"
   ],
+  "requiredStatusChecks": null,
   "automerge": true,
   "major": {
     "automerge": false
