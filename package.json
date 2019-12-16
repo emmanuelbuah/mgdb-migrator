@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/jest": "24.0.23",
     "@types/lodash": "4.14.149",
-    "@types/mongodb": "3.3.12",
+    "@types/mongodb": "3.3.13",
     "@types/node": "10.17.9",
     "jest": "24.9.0",
     "tslint": "5.20.1",
