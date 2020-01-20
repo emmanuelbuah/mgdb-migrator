@@ -24,7 +24,7 @@
 */
 
 import * as _ from 'lodash';
-import { Collection, Db, MongoClient } from 'mongodb';
+import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb';
 import { typeCheck } from 'type-check';
 const check = typeCheck;
 
@@ -36,6 +36,8 @@ export interface IMigrationOptions {
   logIfLatest?: boolean;
   collectionName?: string;
   db: string | Db;
+  dbOptions?: MongoClientOptions;
+  dbName?: string;
 }
 export interface IMigration {
   version: number;
@@ -102,10 +104,13 @@ export class Migration {
     }
     let db: string | Db;
     if (typeof (this.options.db) === 'string') {
-      const client = await MongoClient.connect(this.options.db, {
-        useNewUrlParser: true,
-      });
-      db = client.db();
+      const client = await MongoClient.connect(
+        this.options.db,
+        this.options.dbOptions || {
+          useNewUrlParser: true,
+        }
+      );
+      db = client.db(this.options.dbName || undefined);
     } else {
       db = this.options.db;
     }
@@ -385,13 +390,13 @@ export class Migration {
     const updateResult = await this.collection.updateOne({
       _id: 'control',
     }, {
-        $set: {
-          version: control.version,
-          locked: control.locked,
-        },
-      }, {
-        upsert: true,
-      });
+      $set: {
+        version: control.version,
+        locked: control.locked,
+      },
+    }, {
+      upsert: true,
+    });
 
     if (updateResult && updateResult.result.ok) {
       return control;

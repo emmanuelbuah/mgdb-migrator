@@ -32,6 +32,13 @@ migrator.config({
       collectionName: 'migrations',
       // mongdb url or mongo Db instance
       db: "your connection string",
+      // optional mongdb Client options
+      dbOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      // optional database, in case using it in connection string is not an option
+      dbName: "your database name",
 }); // Returns a promise
 
 ```
@@ -54,6 +61,13 @@ var migrator = new Migration({
       collectionName: 'migrations',
       // mongdb url or mongo Db instance
       db: "your connection string",
+      // optional mongdb Client options
+      dbOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      // optional database, in case using it in connection string is not an option
+      dbName: "your database name"
 })
 await migrator.config(); // Returns a promise
 ```
@@ -188,6 +202,10 @@ migrator.config({
   collectionName: "migrations"
   // mongdb url or mongo Db instance
   db: "your connection string",
+  // optional mongdb Client options
+  dbOptions: null,
+  // optional database, in case using it in connection string is notan option
+  dbName: null
 });
 ```
 
