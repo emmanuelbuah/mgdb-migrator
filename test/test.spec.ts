@@ -13,7 +13,7 @@ describe('Migration', () => {
         log: true,
         logIfLatest: true,
         collectionName: '_migration',
-        db: dbURL,
+        db: { connectionUrl: dbURL },
       });
       await migrator.config();
     } catch (e) {

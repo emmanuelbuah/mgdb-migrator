@@ -30,14 +30,18 @@ const check = typeCheck;
 
 export type SyslogLevels = 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'crit' | 'alert';
 
+export interface IDbProperties {
+  connectionUrl: string;
+  name?: string;
+  options?: MongoClientOptions;
+}
+
 export interface IMigrationOptions {
   log?: boolean;
   logger?: (level: SyslogLevels, ...args: any[]) => void;
   logIfLatest?: boolean;
   collectionName?: string;
-  db: string | Db;
-  dbOptions?: MongoClientOptions;
-  dbName?: string;
+  db: IDbProperties | Db;
 }
 export interface IMigration {
   version: number;
@@ -102,17 +106,19 @@ export class Migration {
     if (!(this.db instanceof Db) && !this.options.db) {
       throw new ReferenceError('Option.db canno\'t be null');
     }
-    let db: string | Db;
-    if (typeof (this.options.db) === 'string') {
-      const client = await MongoClient.connect(
-        this.options.db,
-        this.options.dbOptions || {
-          useNewUrlParser: true,
-        }
-      );
-      db = client.db(this.options.dbName || undefined);
-    } else {
+    let db: IDbProperties | Db;
+    if (this.options.db instanceof Db) {
       db = this.options.db;
+    } else {
+      const options = { ...this.options.db.options };
+      if (options.useNewUrlParser !== false) {
+        options.useNewUrlParser = true;
+      }
+      const client = await MongoClient.connect(
+        this.options.db.connectionUrl,
+        options,
+      );
+      db = client.db(this.options.db.name || undefined);
     }
     this.collection = (db as Db).collection(this.options.collectionName);
     this.db = db as Db;
