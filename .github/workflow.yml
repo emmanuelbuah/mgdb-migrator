@@ -1,26 +1,39 @@
 name: CI
 
-on: [push]
+on:
+  pull_request:
+  push:
+    branches:
+      - next
+      - master
+      - f/**
 
 jobs:
-  build:
-
+  lint_build_test:
+    name: Lint, Build & Test
     runs-on: ubuntu-latest
-    
-    strategy:
-     matrix:
-       node-version: [12.x]
+    env:
+      MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db-test
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - name: Run docker compose
-      run: npm run docker:test
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: NPM install
+      - run: npm ci
+
+      - name: Lint
+      - run: npm run lint
+
+      - name: Build
+      - run: npm run build
+
+      - name: Test
+        run: npm run test
+
