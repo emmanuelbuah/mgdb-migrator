@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db-test
-    runs-on: ubuntu-latest
     services:
       mongodb:
         image: mongo
