@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - Github-actions-integration
+      - f/**
+      - next
+      - master
+
+jobs:
+  lint_build_test:
+    name: Lint, Build & Test
+    runs-on: ubuntu-latest
+    env:
+      MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db-test
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: NPM install
+      - run: npm ci
+
+      - name: Lint
+      - run: npm run lint
+
+      - name: Build
+      - run: npm run build
+
+      - name: Test
+        run: npm run test
+
