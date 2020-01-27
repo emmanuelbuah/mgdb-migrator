@@ -1,5 +1,12 @@
 A simple migration system for mongodb supporting up/downwards migrations.
 
+## Status
+
+| Branch | Status |
+| ------ |:------:|
+| Next | ![CI Workflow](https://github.com/emmanuelbuah/mgdb-migrator/workflows/CI%20Workflow/badge.svg?branch=next) |
+| Master | ![CI Workflow](https://github.com/emmanuelbuah/mgdb-migrator/workflows/CI%20Workflow/badge.svg?branch=master) |
+
 ## Installation
 
 Migrations can be installed through yarn or npm. Type:
