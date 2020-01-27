@@ -12,9 +12,10 @@ on:
 jobs:
   lint_build_test:
     name: Lint, Build & Test
-    runs-on: ubuntu-latest
     env:
-      MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db-test
+      MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db
+      NODE_ENV: test
+    runs-on: ubuntu-latest
     services:
       mongodb:
         image: mongo

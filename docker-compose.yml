@@ -23,7 +23,7 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
-    command: mongod --bind_ip 0.0.0.0 --smallfiles
+    command: mongod --bind_ip 0.0.0.0
 
   mgdb-migrator-test:
     image: node:12-alpine
