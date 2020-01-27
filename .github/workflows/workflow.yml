@@ -13,8 +13,7 @@ jobs:
   lint_build_test:
     name: Lint, Build & Test
     env:
-      MONGOLAB_URI: mongodb://localhost:27017/mgdb-migrator-db
-      NODE_ENV: test
+      DBURL: mongodb://localhost:27017/mgdb-migrator-db
     runs-on: ubuntu-latest
     services:
       mongodb:
