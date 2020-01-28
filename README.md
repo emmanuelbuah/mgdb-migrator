@@ -37,8 +37,18 @@ migrator.config({
       logIfLatest: true,
       // migrations collection name. Defaults to 'migrations'
       collectionName: 'migrations',
-      // mongdb url or mongo Db instance
-      db: "your connection string",
+      // mongdb connection properties object or mongo Db instance
+      db: {
+        // mongdb connection url
+        connectionUrl: "your connection string",
+        // optional database name, in case using it in connection string is not an option
+        name: "your database name",
+        // optional mongdb Client options
+        options: {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        },
+      }
 }); // Returns a promise
 
 ```
@@ -59,8 +69,18 @@ var migrator = new Migration({
       logIfLatest: true,
       // migrations collection name
       collectionName: 'migrations',
-      // mongdb url or mongo Db instance
-      db: "your connection string",
+      // mongdb connection properties object or mongo Db instance
+      db: {
+        // mongdb connection url
+        connectionUrl: "your connection string",
+        // optional database name, in case using it in connection string is not an option
+        name: "your database name",
+        // optional mongdb Client options
+        options: {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        },
+      }
 })
 await migrator.config(); // Returns a promise
 ```
@@ -193,8 +213,15 @@ migrator.config({
   logIfLatest: true,
   // migrations collection name to use in the database
   collectionName: "migrations"
-  // mongdb url or mongo Db instance
-  db: "your connection string",
+      // mongdb connection properties object or mongo Db instance
+  db: {
+    // mongdb connection url
+    connectionUrl: "your connection string",
+    // optional database name, in case using it in connection string is not an option
+    name: null,
+    // optional mongdb Client options
+    options: null,
+  }
 });
 ```
 
