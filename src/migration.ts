@@ -92,33 +92,36 @@ export class Migration {
    * @memberof Migration
    */
   public async config(opts?: IMigrationOptions): Promise<void> {
-
     this.options = Object.assign({}, this.options, opts);
 
     if (!this.options.logger && this.options.log) {
       // tslint:disable-next-line: no-console
       this.options.logger = (level: string, ...args) => console.log(level, ...args);
     }
+
     if (this.options.log === false) {
       // tslint:disable-next-line:no-empty
       this.options.logger = (level: string, ...args) => { };
     }
-    if (!(this.db instanceof Db) && !this.options.db) {
-      throw new ReferenceError('Option.db canno\'t be null');
+
+    let db: IDbProperties | Db = this.options.db || this.db;
+    if (!db) {
+      throw new ReferenceError('db option must be defined');
     }
-    let db: IDbProperties | Db;
-    if (this.options.db instanceof Db) {
-      db = this.options.db;
-    } else {
-      const options = { ...this.options.db.options };
+
+    // Check if connectionUrl exists. If it does, assume its IDbProperties object
+    if ((db as IDbProperties).connectionUrl) {
+      const dbProps = db as IDbProperties;
+      const options = { ...dbProps.options };
       if (options.useNewUrlParser !== false) {
         options.useNewUrlParser = true;
       }
       const client = await MongoClient.connect(
-        this.options.db.connectionUrl,
+        dbProps.connectionUrl,
         options,
       );
-      db = client.db(this.options.db.name || undefined);
+      // XXX: This never gets disconnected.
+      db = client.db(dbProps.name);
     }
     this.collection = (db as Db).collection(this.options.collectionName);
     this.db = db as Db;
