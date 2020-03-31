@@ -40,7 +40,7 @@
     "@types/jest": "25.1.4",
     "@types/lodash": "4.14.149",
     "@types/mongodb": "3.5.4",
-    "@types/node": "10.17.17",
+    "@types/node": "10.17.18",
     "jest": "25.2.4",
     "tslint": "5.20.1",
     "tslint-eslint-rules": "5.4.0",
