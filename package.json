@@ -41,7 +41,7 @@
     "@types/lodash": "4.14.149",
     "@types/mongodb": "3.5.4",
     "@types/node": "10.17.18",
-    "jest": "25.2.6",
+    "jest": "25.2.7",
     "tslint": "5.20.1",
     "tslint-eslint-rules": "5.4.0",
     "tslint-microsoft-contrib": "6.2.0",
