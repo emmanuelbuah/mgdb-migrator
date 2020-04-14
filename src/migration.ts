@@ -46,8 +46,8 @@ export interface IMigrationOptions {
 export interface IMigration {
   version: number;
   name: string;
-  up: (db: Db) => Promise<any> | any;
-  down: (db: Db) => Promise<any> | any;
+  up: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<any> | any;
+  down: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<any> | any;
 }
 
 export class Migration {
@@ -266,7 +266,7 @@ export class Migration {
       this.options.logger('info',
         'Running ' + direction + '() on version ' + migration.version + maybeName());
 
-      await migration[direction](self.db, migration);
+      await migration[direction](self.db, this.options.logger);
 
     };
 

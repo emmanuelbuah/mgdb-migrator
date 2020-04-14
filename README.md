@@ -32,7 +32,7 @@ migrator.config({
       // false disables logging
       log: true,
       // null or a function
-      logger: (level, ..arg) => console.log(level, ..arg),
+      logger: (level, ...args) => console.log(level, ...args),
       // enable/disable info log "already at latest."
       logIfLatest: true,
       // migrations collection name. Defaults to 'migrations'
@@ -64,7 +64,7 @@ var migrator = new Migration({
       // false disables logging
       log: true,
       // null or a function
-      logger: (level, ..arg) => console.log(level, ..arg),
+      logger: (level, ...args) => console.log(level, ...args),
       // enable/disable info log "already at latest."
       logIfLatest: true,
       // migrations collection name
@@ -90,7 +90,7 @@ To write a simple migration, somewhere in the server section of your project def
 ``` javascript
 migrator.add({
   version: 1,
-  up: function(db) {
+  up: function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 1
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
   }
@@ -111,11 +111,11 @@ A more complete set of migrations might look like:
 migrator.add({
   version: 1,
   name: 'Name for this migration',
-  up: function(db) {
+  up: function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 1.
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
   },
-  down: function(db) {
+  down: function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 0
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
   }
@@ -124,11 +124,11 @@ migrator.add({
 migrator.add({
   version: 2,
   name: 'Name for this migration',
-  up: function(db) {
+  up: function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 2
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
   },
-  down: function(db) {
+  down: function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 1
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
   }
@@ -141,12 +141,12 @@ Control execution flow with async/await (promises):
 migrator.add({
   version: 2,
   name: 'Name for this migration',
-  up: async function(db) {
+  up: async function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 2
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
      await db.collections('someCollection')....
   },
-  down: async function(db) {
+  down: async function(db, logger) {
     // use `db`(mongo driver Db instance) for migration setup to version 1
     // See http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html for db api
     await db.collections('someCollection')....
