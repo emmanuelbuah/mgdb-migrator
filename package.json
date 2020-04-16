@@ -37,11 +37,11 @@
     "node": ">=7.10.0"
   },
   "devDependencies": {
-    "@types/jest": "25.1.5",
+    "@types/jest": "25.2.1",
     "@types/lodash": "4.14.149",
-    "@types/mongodb": "3.5.4",
-    "@types/node": "10.17.18",
-    "jest": "25.2.7",
+    "@types/mongodb": "3.5.6",
+    "@types/node": "10.17.19",
+    "jest": "25.3.0",
     "tslint": "5.20.1",
     "tslint-eslint-rules": "5.4.0",
     "tslint-microsoft-contrib": "6.2.0",
@@ -51,7 +51,7 @@
   "dependencies": {
     "@types/bluebird": "3.5.30",
     "lodash": "4.17.15",
-    "mongodb": "3.5.5",
+    "mongodb": "3.5.6",
     "type-check": "0.4.0"
   },
   "jest": {
