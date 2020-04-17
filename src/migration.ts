@@ -1,7 +1,7 @@
 /*
   Adds migration capabilities. Migrations are defined like:
 
-  Migrations.add({
+  Migrator.add({
     up: function() {}, //*required* code to run to migrate upwards
     version: 1, //*required* number to identify migration order
     down: function() {}, //*optional* code to run to migrate downwards
@@ -30,44 +30,47 @@ const check = typeCheck;
 
 export type SyslogLevels = 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'crit' | 'alert';
 
-export interface IDbProperties {
+export interface DbProperties {
   connectionUrl: string;
   name?: string;
   options?: MongoClientOptions;
 }
 
-export interface IMigrationOptions {
+export interface MigrationOptions {
   log?: boolean;
   logger?: (level: SyslogLevels, ...args: any[]) => void;
   logIfLatest?: boolean;
   collectionName?: string;
-  db: IDbProperties | Db;
+  db: DbProperties | Db;
 }
-export interface IMigration {
+export interface Migration {
   version: number;
   name: string;
   up: (db: Db) => Promise<any> | any;
   down: (db: Db) => Promise<any> | any;
 }
 
-export class Migration {
+export class Migrator {
 
   private defaultMigration = {
     version: 0,
+    name: 'default',
     // tslint:disable-next-line:no-empty
-    up: () => { },
+    up: (_db: Db) => Promise.resolve(),
+     // tslint:disable-next-line:no-empty
+    down: (_db: Db) => Promise.resolve(`Can't go down from default`),
   };
-  private list: any[];
+  private list: Migration[];
   private collection: Collection;
   private db: Db;
-  private options: IMigrationOptions;
+  private options: MigrationOptions;
 
   /**
    * Creates an instance of Migration.
-   * @param {IMigrationOptions} [opts]
+   * @param {MigrationOptions} [opts]
    * @memberof Migration
    */
-  constructor(opts?: IMigrationOptions) {
+  constructor(opts?: MigrationOptions) {
     // Since we'll be at version 0 by default, we should have a migration set for it.
     this.list = [this.defaultMigration];
     this.options = opts ? opts : {
@@ -87,11 +90,11 @@ export class Migration {
   /**
    * Configure migration
    *
-   * @param {IMigrationOptions} [opts]
+   * @param {MigrationOptions} [opts]
    * @returns {Promise<void>}
    * @memberof Migration
    */
-  public async config(opts?: IMigrationOptions): Promise<void> {
+  public async config(opts?: MigrationOptions): Promise<void> {
     this.options = Object.assign({}, this.options, opts);
 
     if (!this.options.logger && this.options.log) {
@@ -101,17 +104,17 @@ export class Migration {
 
     if (this.options.log === false) {
       // tslint:disable-next-line:no-empty
-      this.options.logger = (level: string, ...args) => { };
+      this.options.logger = (_level: string, ..._args) => { return; };
     }
 
-    let db: IDbProperties | Db = this.options.db || this.db;
+    let db: DbProperties | Db = this.options.db || this.db;
     if (!db) {
       throw new ReferenceError('db option must be defined');
     }
 
     // Check if connectionUrl exists. If it does, assume its IDbProperties object
-    if ((db as IDbProperties).connectionUrl) {
-      const dbProps = db as IDbProperties;
+    if ((db as DbProperties).connectionUrl) {
+      const dbProps = db as DbProperties;
       const options = { ...dbProps.options };
       if (options.useNewUrlParser !== false) {
         options.useNewUrlParser = true;
@@ -130,10 +133,10 @@ export class Migration {
   /**
    * Add a new migration
    *
-   * @param {IMigration} migration
-   * @memberof Migration
+   * @param {Migration} migration
+   * @memberof Migrator
    */
-  public add(migration: IMigration): void {
+  public add(migration: Migration): void {
 
     if (typeof migration.up !== 'function') {
       throw new Error('Migration must supply an up function.');
@@ -249,37 +252,18 @@ export class Migration {
    * @memberof Migration
    */
   private async execute(version: any, rerun?: any): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     const control = await this.getControl(); // Side effect: upserts control document.
     let currentVersion = control.version;
 
-    // Run the actual migration
-    const migrate = async (direction, idx) => {
-      const migration = self.list[idx];
-
-      if (typeof migration[direction] !== 'function') {
-        unlock();
-        throw new Error('Cannot migrate ' + direction + ' on version ' + migration.version);
-      }
-
-      function maybeName() {
-        return migration.name ? ' (' + migration.name + ')' : '';
-      }
-
-      this.options.logger('info',
-        'Running ' + direction + '() on version ' + migration.version + maybeName());
-
-      await migration[direction](self.db, migration);
-
-    };
-
     // Returns true if lock was acquired.
     const lock = async () => {
       /*
-       * This is an atomic op. The op ensures only one caller at a time will match the control
-       * object and thus be able to update it.  All other simultaneous callers will not match the
-       * object and thus will have null return values in the result of the operation.
-       */
+        * This is an atomic op. The op ensures only one caller at a time will match the control
+        * object and thus be able to update it.  All other simultaneous callers will not match the
+        * object and thus will have null return values in the result of the operation.
+        */
       const updateResult = await self.collection.findOneAndUpdate({
         _id: 'control',
         locked: false,
@@ -304,6 +288,28 @@ export class Migration {
       locked: true,
       version: currentVersion,
     });
+
+
+    // Run the actual migration
+    const migrate = async (direction, idx) => {
+      const migration = self.list[idx];
+
+      if (typeof migration[direction] !== 'function') {
+        unlock();
+        throw new Error('Cannot migrate ' + direction + ' on version ' + migration.version);
+      }
+
+      function maybeName() {
+        return migration.name ? ' (' + migration.name + ')' : '';
+      }
+
+      this.options.logger('info',
+        'Running ' + direction + '() on version ' + migration.version + maybeName());
+
+      await migration[direction](self.db, migration);
+
+    };
+
 
     if ((await lock()) === false) {
       this.options.logger('info', 'Not migrating, control is locked.');

@@ -1,34 +1,30 @@
 
-import { Migration } from '../src/';
+import { Migrator } from '../src/';
 
 const dbURL = process.env.DBURL;
 
 describe('Migration', () => {
 
-  let migrator: Migration;
+  let migrator: Migrator;
 
   beforeAll(async () => {
-    try {
-      migrator = new Migration({
+      migrator = new Migrator({
         log: true,
         logIfLatest: true,
         collectionName: '_migration',
         db: { connectionUrl: dbURL },
       });
       await migrator.config();
-    } catch (e) {
-      throw e;
-    }
   });
 
   beforeEach(() => {
     migrator.add({
       version: 1,
       name: 'Version 1',
-      up: (db) => {
+      up: async (_db) => {
         return 'done';
       },
-      down: (db) => {
+      down: async (_db) => {
         return 'done';
       },
     });
@@ -36,10 +32,10 @@ describe('Migration', () => {
     migrator.add({
       version: 2,
       name: 'Version 2',
-      up: (db) => {
+      up: async (_db) => {
         return 'done';
       },
-      down: (db) => {
+      down: async (_db) => {
         return 'done';
       },
     });
@@ -111,10 +107,10 @@ describe('Migration', () => {
         migrator.add({
           version: 3,
           name: 'Version 3.',
-          up: async (db) => {
+          up: async (_db) => {
             return 'done';
           },
-          down: async (db) => {
+          down: async (_db) => {
             return 'done';
           },
         });
@@ -122,10 +118,10 @@ describe('Migration', () => {
         migrator.add({
           version: 4,
           name: 'Version 4',
-          up: async (db) => {
+          up: async (_db) => {
             return 'done';
           },
-          down: async (db) => {
+          down: async (_db) => {
             return 'done';
           },
         });
@@ -156,10 +152,12 @@ describe('Migration', () => {
           version: 3,
           name: 'Version 3.',
           // tslint:disable-next-line: no-empty
-          up: async (db) => {
+          up: async (_db) => {
+            return 'done';
           },
           // tslint:disable-next-line: no-empty
-          down: async (db) => {
+          down: async (_db) => {
+            return 'done';
           },
         });
 
@@ -167,9 +165,10 @@ describe('Migration', () => {
           version: 4,
           name: 'Version 4.',
           // tslint:disable-next-line: no-empty
-          up: async (db) => {
+          up: async (_db) => {
+            return 'done';
           },
-          down: async (db) => {
+          down: async (_db) => {
             throw new Error('Something went wrong');
           },
         });
@@ -177,11 +176,12 @@ describe('Migration', () => {
         migrator.add({
           version: 5,
           name: 'Version 5.',
-          up: async (db) => {
+          up: async (_db) => {
             throw new Error('Something went wrong');
           },
           // tslint:disable-next-line: no-empty
-          down: async (db) => {
+          down: async (_db) => {
+            return 'done';
           },
         });
 

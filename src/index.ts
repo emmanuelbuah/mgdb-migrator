@@ -1,9 +1,9 @@
-import { IMigrationOptions, Migration, SyslogLevels } from './migration';
+import { MigrationOptions, Migration, Migrator, SyslogLevels } from './migration';
 
-const migrator = new Migration();
+const migrator = new Migrator();
 
 if (process.env.MIGRATE) {
   migrator.migrateTo(process.env.MIGRATE);
 }
 
-export { migrator, Migration, IMigrationOptions, SyslogLevels };
+export { migrator, Migrator, Migration, MigrationOptions, SyslogLevels };

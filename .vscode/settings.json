@@ -4,7 +4,7 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "editor.renderIndentGuides": true,
-  "tslint.autoFixOnSave": true,
+  "tslint.enable": false,
   "editor.rulers": [100],
   "editor.wordWrapColumn": 100,
   "files.trimTrailingWhitespace": true,
