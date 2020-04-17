@@ -10,7 +10,6 @@
     "docker:down": "docker-compose down",
     "docker:start": "npm run build && docker-compose up mgdb-migrator-dev || true",
     "docker:test": "npm run build && docker-compose up mgdb-migrator-test || true",
-    "lint_old": "tslint --project .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "npm run lint && npm run build",
