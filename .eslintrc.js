@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -9,7 +9,8 @@ module.exports = {
     'prettier/@typescript-eslint',
   ],
   rules: {
-    'no-unused-vars': [
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
       'error',
       {
         vars: 'all',
@@ -18,5 +19,22 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
+    'prefer-arrow-callback': [ 'error', { 'allowNamedFunctions': true }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    'import/order': [
+      'error',
+      {
+        "groups": [
+          "builtin",
+          "external",
+          ["internal", "parent", "sibling", "index"]
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
   },
 };

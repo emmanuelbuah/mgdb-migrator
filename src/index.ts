@@ -1,4 +1,9 @@
-import { MigrationOptions, Migration, Migrator, SyslogLevels } from './migration';
+import {
+  MigrationOptions,
+  Migration,
+  Migrator,
+  SyslogLevels,
+} from './migration';
 
 const migrator = new Migrator();
 
