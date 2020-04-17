@@ -59,10 +59,10 @@ export interface Migration {
 
 export class Migrator {
   private defaultMigration = {
-    version: 0,
+    down: (_db: Db) => Promise.reject(`Can't go down from default`),
     name: 'default',
     up: (_db: Db) => Promise.resolve(),
-    down: (_db: Db) => Promise.reject(`Can't go down from default`),
+    version: 0,
   };
   private list: Migration[];
   private collection: Collection;
@@ -80,16 +80,16 @@ export class Migrator {
     this.options = opts
       ? opts
       : {
-          // False disables logging
-          log: true,
-          // Null or a function
-          logger: null,
-          // Enable/disable info log "already at latest."
-          logIfLatest: true,
           // Migrations collection name
           collectionName: 'migrations',
           // Mongdb url or mongo Db instance
           db: null,
+          // False disables logging
+          log: true,
+          // Enable/disable info log "already at latest."
+          logIfLatest: true,
+          // Null or a function
+          logger: null,
         };
   }
 
@@ -104,8 +104,8 @@ export class Migrator {
     this.options = Object.assign({}, this.options, opts);
 
     if (!this.options.logger && this.options.log) {
-      // tslint:disable-next-line: no-console
       this.options.logger = (level: string, ...args) =>
+        // eslint-disable-next-line no-console
         console.log(level, ...args);
     }
 
@@ -417,8 +417,8 @@ export class Migrator {
     return (
       con ||
       (await this.setControl({
-        version: 0,
         locked: false,
+        version: 0,
       }))
     );
   }
@@ -445,8 +445,8 @@ export class Migrator {
       },
       {
         $set: {
-          version: control.version,
           locked: control.locked,
+          version: control.version,
         },
       },
       {

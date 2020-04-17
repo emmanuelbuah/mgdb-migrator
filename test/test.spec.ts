@@ -7,10 +7,10 @@ describe('Migration', () => {
 
   beforeAll(async () => {
     migrator = new Migrator({
-      log: true,
-      logIfLatest: true,
       collectionName: '_migration',
       db: { connectionUrl: dbURL },
+      log: true,
+      logIfLatest: true,
     });
     await migrator.config();
   });
