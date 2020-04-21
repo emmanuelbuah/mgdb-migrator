@@ -1,10 +1,8 @@
 ### Description
 
 <!---
-- Please include a summary of the change and which issue is related
-- Include relevant motivation and context
-- List any dependencies that are required for this change
-- Give resource to check any kind of visual change
+- Include a summary of the change and which issue it relates to
+- List any related issues or dependencies if any
 -->
 
 #### Issues
@@ -15,16 +13,17 @@ Closes #(issue)
 
 - [ ] Properly title
 - [ ] Detailed description
-- [ ] Closes issue related
+- [ ] Include issue for which this PR closes
 - [ ] Linked issue on Zenhub if applicable
-- [ ] Assign to a codeowner
-- [ ] Images/Gif/Video for visual changes
+- [ ] Link to related issues if any
+- [ ] Assign to a reviewer
+- [ ] Include Images/Gifs/Videos for visual changes
 
 #### Code checklist
 
 - [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
+- [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] I added tests
 - [ ] Any dependent changes have been merged and published in downstream modules

@@ -1,15 +1,14 @@
 ### Description
 
 <!---
-- Please include a summary of the change and which issue is related
-- Include relevant motivation and context
-- List any dependencies that are required for this change
+- Include a summary of the change and which issue it relates to
+- List any related issues or dependencies if any
 -->
 
 #### Details
 
 <!---
-Any resources available, like images, links and videos;
+Any resources available - images, links and videos;
 -->
 
 #### Dependencies
