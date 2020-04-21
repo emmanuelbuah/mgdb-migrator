@@ -43,7 +43,7 @@ export interface DbProperties {
   options?: MongoClientOptions;
 }
 
-export interface MigrationOptions {
+export interface MigratorOptions {
   log?: boolean;
   logger?: (level: SyslogLevels, ...args: any[]) => void;
   logIfLatest?: boolean;
@@ -67,14 +67,14 @@ export class Migrator {
   private list: Migration[];
   private collection: Collection;
   private db: Db;
-  private options: MigrationOptions;
+  private options: MigratorOptions;
 
   /**
    * Creates an instance of Migration.
-   * @param {MigrationOptions} [opts]
+   * @param {MigratorOptions} [opts]
    * @memberof Migration
    */
-  constructor(opts?: MigrationOptions) {
+  constructor(opts?: MigratorOptions) {
     // Since we'll be at version 0 by default, we should have a migration set for it.
     this.list = [this.defaultMigration];
     this.options = opts
@@ -96,11 +96,11 @@ export class Migrator {
   /**
    * Configure migration
    *
-   * @param {MigrationOptions} [opts]
+   * @param {MigratorOptions} [opts]
    * @returns {Promise<void>}
    * @memberof Migration
    */
-  public async config(opts?: MigrationOptions): Promise<void> {
+  public async config(opts?: MigratorOptions): Promise<void> {
     this.options = Object.assign({}, this.options, opts);
 
     if (!this.options.logger && this.options.log) {

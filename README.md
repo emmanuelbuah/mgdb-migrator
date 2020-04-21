@@ -25,10 +25,10 @@ $ yarn add mgdb-migrator
 
 ### Basics
 
-Import and use the migration instance - migrator. User the migrator to configure and setup your migration
+Import and use the migrator instance - migrator. User the migrator to configure and setup your migration
 
 ```javascript
-import { migrator } from 'migration';
+import { migrator } from 'mgdb-migrator';
 
 migrator.config({
       // false disables logging
@@ -57,12 +57,12 @@ migrator.config({
 
 Or ...
 
-Define a new instance of migration and configure it as you see fit
+Define a new instance of migrator and configure it as you see fit
 
 ```javascript
-import { Migration } from 'migration';
+import { Migrator } from 'mgdb-migrator';
 
-var migrator = new Migration({
+var migrator = new Migrator({
       // false disables logging
       log: true,
       // null or a function
@@ -204,7 +204,7 @@ migrator.getNumberOfMigrations();
 
 ### Configuration
 
-You can configure Migration with the `config` method. Defaults are:
+You can configure Migrator with the `config` method. Defaults are:
 
 ```javascript
 migrator.config({
@@ -244,7 +244,7 @@ var MyLogger = function(opts) {
   console.log('Message', opts.message);
 }
 
-Migrations.config({
+Migrator.config({
   ...
   logger: MyLogger
   ...
