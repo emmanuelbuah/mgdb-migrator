@@ -37,6 +37,8 @@ export type SyslogLevels =
   | 'crit'
   | 'alert';
 
+export type Logger = (level: SyslogLevels, ...args: any[]) => void;
+
 export interface DbProperties {
   connectionUrl: string;
   name?: string;
@@ -45,7 +47,7 @@ export interface DbProperties {
 
 export interface MigratorOptions {
   log?: boolean;
-  logger?: (level: SyslogLevels, ...args: any[]) => void;
+  logger?: Logger;
   logIfLatest?: boolean;
   collectionName?: string;
   db: DbProperties | Db;
@@ -53,8 +55,8 @@ export interface MigratorOptions {
 export interface Migration {
   version: number;
   name: string;
-  up: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<void> | void;
-  down: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<void> | void;
+  up: (db: Db, logger?: Logger) => Promise<void> | void;
+  down: (db: Db, logger?: Logger) => Promise<void> | void;
 }
 
 export class Migrator {
@@ -111,6 +113,7 @@ export class Migrator {
 
     if (this.options.log === false) {
       this.options.logger = (_level: string, ..._args) => {
+        //No-op
         return;
       };
     }
@@ -328,7 +331,7 @@ export class Migrator {
           maybeName()
       );
 
-      await migration[direction](self.db, migration,  this.options.logger);
+      await migration[direction](self.db, this.options.logger);
     };
 
     if ((await lock()) === false) {

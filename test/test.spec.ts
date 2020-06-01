@@ -1,6 +1,7 @@
 import { Migrator } from '../src/';
 
 const dbURL = process.env.DBURL;
+const mockLogger = jest.fn();
 
 describe('Migration', () => {
   let migrator: Migrator;
@@ -11,12 +12,14 @@ describe('Migration', () => {
       db: { connectionUrl: dbURL },
       log: true,
       logIfLatest: true,
+      logger: mockLogger,
     });
     await migrator.config();
   });
 
   beforeEach(() => {
     migrator.add({
+      /* eslint-disable sort-keys */
       version: 1,
       name: 'Version 1',
       up: async (_db) => {
@@ -25,9 +28,11 @@ describe('Migration', () => {
       down: async (_db) => {
         return;
       },
+      /* eslint-enable sort-keys */
     });
 
     migrator.add({
+      /* eslint-disable sort-keys */
       version: 2,
       name: 'Version 2',
       up: async (_db) => {
@@ -36,6 +41,7 @@ describe('Migration', () => {
       down: async (_db) => {
         return;
       },
+      /* eslint-enable sort-keys */
     });
   });
 
@@ -97,9 +103,10 @@ describe('Migration', () => {
       expect(currentVersion).toBe(0);
     });
 
-    describe('With async up() & down()', () => {
+    describe('Executes async up() & down() as expected', () => {
       beforeEach(() => {
         migrator.add({
+          /* eslint-disable sort-keys */
           version: 3,
           name: 'Version 3.',
           up: async (_db) => {
@@ -108,9 +115,11 @@ describe('Migration', () => {
           down: async (_db) => {
             return;
           },
+          /* eslint-enable sort-keys */
         });
 
         migrator.add({
+          /* eslint-disable sort-keys */
           version: 4,
           name: 'Version 4',
           up: async (_db) => {
@@ -119,6 +128,7 @@ describe('Migration', () => {
           down: async (_db) => {
             return;
           },
+          /* eslint-enable sort-keys */
         });
       });
 
@@ -139,43 +149,45 @@ describe('Migration', () => {
       });
     });
 
-    describe('On Error', () => {
+    describe('Throws an Error when expected', () => {
       beforeEach(() => {
         migrator.add({
+          /* eslint-disable sort-keys */
           version: 3,
           name: 'Version 3.',
-          // tslint:disable-next-line: no-empty
           up: async (_db) => {
             return;
           },
-          // tslint:disable-next-line: no-empty
           down: async (_db) => {
             return;
           },
+          /* eslint-enable sort-keys */
         });
 
         migrator.add({
+          /* eslint-disable sort-keys */
           version: 4,
           name: 'Version 4.',
-          // tslint:disable-next-line: no-empty
           up: async (_db) => {
             return;
           },
           down: async (_db) => {
             throw new Error('Something went wrong');
           },
+          /* eslint-enable sort-keys */
         });
 
         migrator.add({
+          /* eslint-disable sort-keys */
           version: 5,
           name: 'Version 5.',
           up: async (_db) => {
             throw new Error('Something went wrong');
           },
-          // tslint:disable-next-line: no-empty
           down: async (_db) => {
             return;
           },
+          /* eslint-enable sort-keys */
         });
       });
 
@@ -204,6 +216,48 @@ describe('Migration', () => {
         }
         currentVersion = await migrator.getVersion();
         expect(currentVersion).toBe(4);
+      });
+    });
+
+    describe('Executes migrations with right callback params', () => {
+      let mockedUpFunc;
+      let mockedDownFunc;
+      beforeEach(() => {
+        mockedUpFunc = jest.fn();
+        mockedDownFunc = jest.fn();
+        migrator.add({
+          /* eslint-disable sort-keys */
+          version: 3,
+          name: 'Version 3.',
+          up: mockedUpFunc,
+          down: mockedDownFunc,
+          /* eslint-enable sort-keys */
+        });
+      });
+
+      test('up() on v3 is executed with the right params', async () => {
+        // eslint-disable-next-line no-debugger
+        debugger;
+        await migrator.migrateTo(3);
+        const currentVersion = await migrator.getVersion();
+        // eslint-disable-next-line no-debugger
+        debugger;
+        expect(currentVersion).toBe(3);
+        expect(mockedUpFunc.mock.calls.length).toEqual(1);
+        expect(mockedDownFunc.mock.calls[0].length).toEqual(2);
+        expect(mockedUpFunc.mock.calls[0][1]).toStrictEqual(mockLogger);
+      });
+
+      test('down() on v3 is executed with the right params', async () => {
+        await migrator.migrateTo(3);
+        let currentVersion = await migrator.getVersion();
+        expect(currentVersion).toBe(3);
+        await migrator.migrateTo(2);
+        currentVersion = await migrator.getVersion();
+        expect(currentVersion).toBe(2);
+        expect(mockedDownFunc.mock.calls.length).toEqual(1);
+        expect(mockedDownFunc.mock.calls[0].length).toEqual(2);
+        expect(mockedDownFunc.mock.calls[0][1]).toStrictEqual(mockLogger);
       });
     });
   });
