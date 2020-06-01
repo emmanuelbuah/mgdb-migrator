@@ -244,7 +244,7 @@ describe('Migration', () => {
         debugger;
         expect(currentVersion).toBe(3);
         expect(mockedUpFunc.mock.calls.length).toEqual(1);
-        expect(mockedDownFunc.mock.calls[0].length).toEqual(2);
+        expect(mockedUpFunc.mock.calls[0].length).toEqual(2);
         expect(mockedUpFunc.mock.calls[0][1]).toStrictEqual(mockLogger);
       });
 
