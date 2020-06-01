@@ -1,7 +1,8 @@
 module.exports = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  env: {
+    es6: true,
+    node: true,
+  },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -9,42 +10,38 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
-  env: {
-    node: true,
-    es6: true,
-  },
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  root: true,
   rules: {
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: false,
+        vars: 'all',
+      },
+    ],
     'import/order': [
       'error',
       {
+        alphabetize: { caseInsensitive: true, order: 'asc' },
         groups: [
           'builtin',
           'external',
           ['internal', 'parent', 'sibling', 'index'],
         ],
         'newlines-between': 'always',
-        alphabetize: {
-          order: 'asc',
-          caseInsensitive: true,
-        },
       },
     ],
     'max-params': ['error', 5],
-    'no-param-reassign': 'error',
-    'no-var': 'error',
     'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-param-reassign': 'error',
     'no-unused-vars': 'off',
+    'no-var': 'error',
     'prefer-arrow-callback': ['error', { allowNamedFunctions: true }],
-    'sort-keys': 'warn',
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        vars: 'all',
-        args: 'after-used',
-        ignoreRestSiblings: false,
-        argsIgnorePattern: '^_',
-      },
-    ],
-    '@typescript-eslint/explicit-function-return-type': 'off',
+    'sort-keys': 'error',
   },
 };
