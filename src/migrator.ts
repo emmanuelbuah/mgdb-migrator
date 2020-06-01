@@ -37,7 +37,7 @@ export type SyslogLevels =
   | 'crit'
   | 'alert';
 
-export type Logger = (level: SyslogLevels, ...args: any[]) => void;
+export type Logger = (level: SyslogLevels, ...args: unknown[]) => void;
 
 export interface DbProperties {
   connectionUrl: string;
