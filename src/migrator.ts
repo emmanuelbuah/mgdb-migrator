@@ -53,8 +53,8 @@ export interface MigratorOptions {
 export interface Migration {
   version: number;
   name: string;
-  up: (db: Db) => Promise<void> | void;
-  down: (db: Db) => Promise<void> | void;
+  up: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<void> | void;
+  down: (db: Db, logger?: (level: SyslogLevels, ...args: any[]) => void) => Promise<void> | void;
 }
 
 export class Migrator {
@@ -328,7 +328,7 @@ export class Migrator {
           maybeName()
       );
 
-      await migration[direction](self.db, migration);
+      await migration[direction](self.db, migration,  this.options.logger);
     };
 
     if ((await lock()) === false) {
