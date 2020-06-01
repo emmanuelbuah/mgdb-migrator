@@ -1,50 +1,47 @@
 module.exports = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  env: {
+    es6: true,
+    node: true,
+  },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
   ],
-  env: {
-    "node": true,
-    "es6": true
-  },
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  root: true,
   rules: {
-    'import/order': [
-      'error',
-      {
-        "groups": [
-          "builtin",
-          "external",
-          ["internal", "parent", "sibling", "index"]
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }
-    ],
-    'max-params': ["error", 5],
-    'no-param-reassign': 'error',
-    'no-var': 'error',
-    "no-console": ["error", { "allow": ["warn", "error"] }],
-    'no-unused-vars': 'off',
-    'prefer-arrow-callback': [ 'error', { 'allowNamedFunctions': true }],
-    "sort-keys": "warn",
+    '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
-        vars: 'all',
         args: 'after-used',
-        ignoreRestSiblings: false,
         argsIgnorePattern: '^_',
+        ignoreRestSiblings: false,
+        vars: 'all',
       },
     ],
-    '@typescript-eslint/explicit-function-return-type': 'off'
+    'import/order': [
+      'error',
+      {
+        alphabetize: { caseInsensitive: true, order: 'asc' },
+        groups: [
+          'builtin',
+          'external',
+          ['internal', 'parent', 'sibling', 'index'],
+        ],
+        'newlines-between': 'always',
+      },
+    ],
+    'max-params': ['error', 5],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-param-reassign': 'error',
+    'no-unused-vars': 'off',
+    'no-var': 'error',
+    'prefer-arrow-callback': ['error', { allowNamedFunctions: true }],
+    'sort-keys': 'error',
   },
 };

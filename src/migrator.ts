@@ -20,7 +20,7 @@
   Note: Migrations will lock ensuring only 1 app can be migrating at once. If
   a migration crashes, the control record in the migrations collection will
   remain locked and at the version it was at previously, however the db could
-  be in an inconsistant state.
+  be in an inconsistent state.
 */
 
 import * as _ from 'lodash';
@@ -37,6 +37,8 @@ export type SyslogLevels =
   | 'crit'
   | 'alert';
 
+export type Logger = (level: SyslogLevels, ...args: any[]) => void;
+
 export interface DbProperties {
   connectionUrl: string;
   name?: string;
@@ -45,7 +47,7 @@ export interface DbProperties {
 
 export interface MigratorOptions {
   log?: boolean;
-  logger?: (level: SyslogLevels, ...args: any[]) => void;
+  logger?: Logger;
   logIfLatest?: boolean;
   collectionName?: string;
   db: DbProperties | Db;
@@ -53,8 +55,8 @@ export interface MigratorOptions {
 export interface Migration {
   version: number;
   name: string;
-  up: (db: Db) => Promise<void> | void;
-  down: (db: Db) => Promise<void> | void;
+  up: (db: Db, logger?: Logger) => Promise<void> | void;
+  down: (db: Db, logger?: Logger) => Promise<void> | void;
 }
 
 export class Migrator {
@@ -111,6 +113,7 @@ export class Migrator {
 
     if (this.options.log === false) {
       this.options.logger = (_level: string, ..._args) => {
+        //No-op
         return;
       };
     }
@@ -328,7 +331,7 @@ export class Migrator {
           maybeName()
       );
 
-      await migration[direction](self.db, migration);
+      await migration[direction](self.db, this.options.logger);
     };
 
     if ((await lock()) === false) {
