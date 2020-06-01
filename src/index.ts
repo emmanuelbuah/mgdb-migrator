@@ -1,4 +1,10 @@
-import { MigratorOptions, Migration, Migrator, SyslogLevels } from './migrator';
+import {
+  Logger,
+  MigratorOptions,
+  Migration,
+  Migrator,
+  SyslogLevels,
+} from './migrator';
 
 const migrator = new Migrator();
 
@@ -6,4 +12,4 @@ if (process.env.MIGRATE) {
   migrator.migrateTo(process.env.MIGRATE);
 }
 
-export { migrator, Migrator, Migration, MigratorOptions, SyslogLevels };
+export { Logger, migrator, Migrator, Migration, MigratorOptions, SyslogLevels };
