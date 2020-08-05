@@ -9,7 +9,7 @@ describe('Migration', () => {
   beforeAll(async () => {
     migrator = new Migrator({
       collectionName: '_migration',
-      db: { connectionUrl: dbURL },
+      db: { connectionUrl: dbURL, options: { useUnifiedTopology: true } },
       log: true,
       logIfLatest: true,
       logger: mockLogger,
