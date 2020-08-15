@@ -43,7 +43,7 @@
   "devDependencies": {
     "@commitlint/cli": "9.1.1",
     "@commitlint/config-conventional": "9.1.1",
-    "@types/jest": "26.0.9",
+    "@types/jest": "26.0.10",
     "@types/lodash": "4.14.159",
     "@types/mongodb": "3.5.25",
     "@types/node": "10.17.28",
