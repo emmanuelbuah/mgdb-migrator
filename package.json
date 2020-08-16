@@ -41,8 +41,8 @@
     "node": ">=7.10.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "9.1.1",
-    "@commitlint/config-conventional": "9.1.1",
+    "@commitlint/cli": "9.1.2",
+    "@commitlint/config-conventional": "9.1.2",
     "@types/jest": "26.0.10",
     "@types/lodash": "4.14.159",
     "@types/mongodb": "3.5.25",
