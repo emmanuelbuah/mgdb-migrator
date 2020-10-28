@@ -44,7 +44,7 @@
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
     "@types/jest": "26.0.15",
-    "@types/lodash": "4.14.162",
+    "@types/lodash": "4.14.163",
     "@types/mongodb": "3.5.31",
     "@types/node": "10.17.43",
     "@typescript-eslint/eslint-plugin": "4.6.0",
