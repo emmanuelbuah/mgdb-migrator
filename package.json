@@ -57,7 +57,7 @@
     "jest": "26.6.3",
     "lint-staged": "10.5.1",
     "prettier": "2.1.2",
-    "typescript": "4.0.5"
+    "typescript": "4.1.2"
   },
   "dependencies": {
     "@types/bluebird": "3.5.33",
