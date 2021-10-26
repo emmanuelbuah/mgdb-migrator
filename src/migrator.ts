@@ -45,6 +45,12 @@ export interface DbProperties {
   options?: MongoClientOptions;
 }
 
+interface MigrationControl {
+  locked: boolean;
+  lockedAt?: Date;
+  version: number;
+}
+
 export interface MigratorOptions {
   log?: boolean;
   logger?: Logger;
@@ -67,7 +73,7 @@ export class Migrator {
     version: 0,
   };
   private list: Migration[];
-  private collection: Collection;
+  private collection: Collection<MigrationControl>;
   private db: Db;
   private options: MigratorOptions;
 
@@ -127,14 +133,13 @@ export class Migrator {
     if ((db as DbProperties).connectionUrl) {
       const dbProps = db as DbProperties;
       const options = { ...dbProps.options };
-      if (options.useNewUrlParser !== false) {
-        options.useNewUrlParser = true;
-      }
       const client = await MongoClient.connect(dbProps.connectionUrl, options);
       // XXX: This never gets disconnected.
       db = client.db(dbProps.name);
     }
-    this.collection = (db as Db).collection(this.options.collectionName);
+    this.collection = (db as Db).collection<MigrationControl>(
+      this.options.collectionName
+    );
     this.db = db as Db;
   }
 
@@ -415,7 +420,7 @@ export class Migrator {
    * @returns {Promise<{ version: number, locked: boolean }>}
    * @memberof Migration
    */
-  private async getControl(): Promise<{ version: number; locked: boolean }> {
+  private async getControl(): Promise<MigrationControl> {
     const con = await this.collection.findOne({ _id: 'control' });
     return (
       con ||
@@ -457,7 +462,7 @@ export class Migrator {
       }
     );
 
-    if (updateResult && updateResult.result.ok) {
+    if (updateResult && updateResult.acknowledged) {
       return control;
     } else {
       return null;
