@@ -12,7 +12,7 @@
     "docker:test": "npm run build && docker-compose up mgdb-migrator-test || true",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "prepare": "npm run lint && npm run build",
+    "prepare": "husky install && npm run lint && npm run build",
     "prestart": "npm run lint && npm run build:watch & sleep 12s",
     "prettier": "prettier ./**/*.{js,json,html,md,yml,ts}",
     "prettier:check": "npm run prettier -- --check",
@@ -53,7 +53,7 @@
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.0.0",
-    "husky": "4.2.5",
+    "husky": "8.0.1",
     "jest": "28.1.1",
     "lint-staged": "13.0.2",
     "prettier": "2.7.1",
@@ -76,13 +76,6 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "es5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
